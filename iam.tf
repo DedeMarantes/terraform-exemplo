@@ -23,9 +23,9 @@ resource "aws_iam_group_membership" "group-membership" {
   ]
 
 }
-//Criar grupo segurança para acesso a ssh e http
+//Criar grupo segurança para acesso a efs,ssh e http
 resource "aws_security_group" "acessos" {
-  name   = "acessos ssh e http"
+  name   = "acessos ssh,efs e http"
   vpc_id = aws_vpc.vpc-criada.id
   ingress {
     description = "acesso ssh"
@@ -38,6 +38,13 @@ resource "aws_security_group" "acessos" {
     description = "acesso http"
     to_port     = 80
     from_port   = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "acesso efs"
+    to_port     = 2049
+    from_port   = 2049
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

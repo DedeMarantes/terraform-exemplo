@@ -6,7 +6,7 @@ resource "aws_vpc" "vpc-criada" {
   }
 }
 //Criação das subredes 
-resource "aws_subnet" "public_subnets" {
+resource "aws_subnet" "public_subnet" {
   depends_on              = [aws_vpc.vpc-criada]
   vpc_id                  = aws_vpc.vpc-criada.id
   cidr_block              = var.cidr_subnet[0]
@@ -38,8 +38,8 @@ resource "aws_internet_gateway" "gateway_padrao" {
 
 //Criação NAT gateway
 resource "aws_nat_gateway" "nat-gw" {
-  depends_on    = [aws_subnet.public_subnets, aws_eip.eip]
-  subnet_id     = aws_subnet.public_subnets.id
+  depends_on    = [aws_subnet.public_subnet, aws_eip.eip]
+  subnet_id     = aws_subnet.public_subnet.id
   allocation_id = aws_eip.eip.id
 }
 //endereço para o nat gateway
@@ -71,7 +71,7 @@ resource "aws_route_table" "private_route_table" {
 }
 //Associacao da tabela com as subredes
 resource "aws_route_table_association" "route_association_public" {
-  subnet_id      = aws_subnet.public_subnets.id
+  subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.my_route_table.id
 }
 
