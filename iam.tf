@@ -27,25 +27,15 @@ resource "aws_iam_group_membership" "group-membership" {
 resource "aws_security_group" "acessos" {
   name   = "acessos ssh,efs e http"
   vpc_id = aws_vpc.vpc-criada.id
-  ingress {
-    description = "acesso ssh"
-    to_port     = 22
-    from_port   = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "acesso http"
-    to_port     = 80
-    from_port   = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "acesso efs"
-    to_port     = 2049
-    from_port   = 2049
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = var.settings
+    iterator = acessos_ingress
+    content {
+      description = acessos_ingress.value["description"]
+      from_port   = acessos_ingress.value["port"]
+      to_port = acessos_ingress.value["port"]
+      protocol = "tcp"
+      cidr_blocks = [aws.aws_vpc.vpc-criada.cidr_block]
+    }
   }
 }
